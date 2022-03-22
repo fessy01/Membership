@@ -9,16 +9,25 @@ contract Membership {
     string dateOfRegistration;
   }
   mapping (uint => Member) public members;
-  event SavingsEvent(uint indexed _memberId);
+   event Add(string name, uint age, string dateOfRegistration);
   uint public memberCount;
+  address public sec;
 
   constructor(){
     memberCount = 0;
+    sec = msg.sender;
    
   }
-  function addMember(string memory _name, uint _age, string memory _DateOfRegistration) public {
-    members[memberCount] = Member(memberCount,_name,_age, _DateOfRegistration);
+
+  modifier onlySec {
+      require(msg.sender == sec, "only sec can add members");
+      _;
+   }
+  function addMember(string memory _name, uint _age, string memory _dateOfRegistration) public {
+    members[memberCount] = Member(memberCount,_name,_age, _dateOfRegistration);
     memberCount++;
+    emit Add( _name, _age,_dateOfRegistration);
+
   }
 
   function get(uint _memberId) public view returns(Member memory) {
